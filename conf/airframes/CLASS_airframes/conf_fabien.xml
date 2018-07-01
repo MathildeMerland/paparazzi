@@ -19,6 +19,6 @@
    flight_plan="flight_plans/CLASS_flight_plans/deenethorpe_far_from_radar.xml"
    settings="settings/fixedwing_basic.xml"
    settings_modules="modules/nav_basic_fw.xml modules/guidance_energy.xml modules/stabilization_adaptive_fw.xml modules/airspeed_ms45xx_i2c.xml modules/air_data.xml modules/gps.xml modules/imu_common.xml modules/ahrs_float_dcm.xml"
-   gui_color="#ffff00000000"
+   gui_color="#0000b7c440ac"
   />
 </conf>
