@@ -47,7 +47,7 @@
 
   <rc_commands>
     <set command="SPEED" value="@PITCH"/>
-    <set command="TURN"  value="@ROLL"/>
+    <set command="TURN"  value="-@ROLL"/>
   </rc_commands>
 
   <section name="MIXER">

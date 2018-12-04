@@ -38,7 +38,7 @@ uint16_t speed_cmd_to_msg(uint16_t speed_cmd) {
 }
 
 uint16_t turn_cmd_to_msg(uint16_t turn_cmd) {
-  return ((TURN_OF_CMD(turn_cmd) + 100.0) * 100);
+  return ((TURN_OF_CMD(turn_cmd) + 500.0) * 50);
 }
 
 uint8_t compute_checksum(uint8_t bytes[], int len) {
