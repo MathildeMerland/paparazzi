@@ -3,7 +3,7 @@
 <airframe name="Rover Demo">
 
   <firmware name="rover">
-    <autopilot name="rover.xml"/>
+    <autopilot name="rover_holonomic.xml"/>
 
     <configure name="AHRS_ALIGNER_LED" value="2"/>
     <define name="IMU_MPU9250_READ_MAG" value="0"/>
@@ -32,22 +32,25 @@
     <module name="ahrs" type="int_cmpl_quat"/>
 
     <module name="nav" type="rover_base"/>
-    <module name="guidance" type="rover"/>
+    <module name="guidance" type="rover_holonomic"/>
   </firmware>
 
   <servos driver="OSTRICH">
-    <servo name="O_SPEED" no="0" min="0" neutral="500" max="1000"/>
-    <servo name="O_TURN" no="1" min="0" neutral="500" max="1000"/>
+    <servo name="O_SPEED_X" no="0" min="0" neutral="500" max="1000"/>
+    <servo name="O_SPEED_Y" no="1" min="0" neutral="500" max="1000"/>
+    <servo name="O_TURN" no="2" min="0" neutral="500" max="1000"/>
   </servos>
 
   <commands>
     <axis name="SPEED" failsafe_value="0"/>
+    <axis name="DIR" failsafe_value="0"/>
     <axis name="TURN"  failsafe_value="0"/>
   </commands>
 
   <rc_commands>
-    <set command="SPEED" value="@PITCH"/>
-    <set command="TURN"  value="-@ROLL"/>
+    <set command="SPEED" value="sqrtf(@PITCH*@PITCH + @ROLL*@ROLL)"/>
+    <set command="DIR" value="atan2f(@PITCH, -@ROLL)"/>
+    <set command="TURN"    value="@YAW"/>
   </rc_commands>
 
   <section name="MIXER">
@@ -55,7 +58,8 @@
   </section>
 
   <command_laws>
-    <set servo="O_SPEED" value="@SPEED"/>
+    <set servo="O_SPEED_X" value="@SPEED*cos(@DIR)"/>
+    <set servo="O_SPEED_Y" value="@SPEED*sin(@DIR)"/>
     <set servo="O_TURN"  value="@TURN"/>
   </command_laws>
 
