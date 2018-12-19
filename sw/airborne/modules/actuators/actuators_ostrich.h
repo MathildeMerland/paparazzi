@@ -37,7 +37,7 @@
 
 /* Main actuator structure */
 struct ActuatorsOstrich {
-  uint16_t cmds[2];      ///< commands    //TODO changer type ?
+  uint16_t cmds[3];      ///< commands
   //int32_t encoders[2];  ///< encoder values
   //bool initialized;     ///< init flag
 };

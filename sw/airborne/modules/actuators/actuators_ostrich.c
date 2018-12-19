@@ -53,13 +53,14 @@ uint8_t compute_checksum(uint8_t bytes[], int len) {
 void actuators_ostrich_init() {
   dev = &(ACTUATORS_OSTRICH_DEV);
   actuators_ostrich.cmds[0] = SPEED_NEUTRAL;
-  actuators_ostrich.cmds[1] = TURN_NEUTRAL;
+  actuators_ostrich.cmds[1] = SPEED_NEUTRAL;
+  actuators_ostrich.cmds[2] = TURN_NEUTRAL;
 }
 
 void actuators_ostrich_periodic() {
   uint16_t speed_msg = speed_cmd_to_msg(actuators_ostrich.cmds[0]);
-  uint16_t speed_y_msg = speed_cmd_to_msg(SPEED_NEUTRAL);  //No Y commands for now.
-  uint16_t turn_msg = turn_cmd_to_msg(actuators_ostrich.cmds[1]);
+  uint16_t speed_y_msg = speed_cmd_to_msg(actuators_ostrich.cmds[1]);
+  uint16_t turn_msg = turn_cmd_to_msg(actuators_ostrich.cmds[2]);
   
   union RawMessage raw_message;
   raw_message.speed_message.start_byte = START_BYTE;
