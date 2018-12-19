@@ -28,7 +28,6 @@
 #ifndef ROVER_GUIDANCE_HOLONOMIC_H
 #define ROVER_GUIDANCE_HOLONOMIC_H
 
-
 #include "math/pprz_algebra_float.h"
 #include "generated/airframe.h"
 #include "std.h"
@@ -36,8 +35,8 @@
 struct RoverGuidanceSetpoint {
   /** position setpoint in NED.
    */
-  struct FloatVect2 pos;    ///< position setpoint
-  struct FloatVect2 speed;  ///< speed setpoint
+  struct FloatVect2 pos;    ///< position setpoint (x, y)
+  struct FloatVect3 speed;  ///< speed setpoint (vx, vy, turn)
   float heading;            ///< heading setpoint
   uint8_t mask;             ///< bit 5: vx & vy, bit 6: vz, bit 7: vyaw
 };
@@ -54,6 +53,7 @@ struct RoverGuidancePID {
 
 struct RoverGuidanceControl {
   float motor_speed;
+  float motor_dir;
   float motor_turn;
 };
 
@@ -71,8 +71,8 @@ extern void rover_guidance_periodic(void); // call state machine
 extern void rover_guidance_run(float *heading_sp); // run control loop
 extern void rover_guidance_enter(void);
 
-extern void rover_guidance_set_speed_igain(uint32_t igain);
-extern void rover_guidance_set_turn_igain(uint32_t igain);
+extern void rover_guidance_holonomic_set_speed_igain(uint32_t igain);
+extern void rover_guidance_holonomic_set_turn_igain(uint32_t igain);
 
 #ifdef GUIDANCE_MODE_GUIDED
 /** Run GUIDED mode control

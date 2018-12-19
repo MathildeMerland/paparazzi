@@ -88,7 +88,7 @@ void rover_guidance_run(float *heading_sp)
   rover_guidance.speed_pid.err = float_vect2_norm(&pos_err);
   BoundAbs(rover_guidance.speed_pid.err, MAX_POS_ERR);
 
-  // speed and heading update when far enough
+  // speed update when far enough
   if (rover_guidance.speed_pid.err > PROXIMITY_DIST) {
     // compute speed error
     rover_guidance.speed_pid.d_err = - stateGetHorizontalSpeedNorm_f();
@@ -96,19 +96,25 @@ void rover_guidance_run(float *heading_sp)
     // integral
     rover_guidance.speed_pid.sum_err = 0.f; // nothing for now
     // run PID
-    rover_guidance.cmd.motor_speed = MAX_PPRZ * compute_pid(&rover_guidance.speed_pid);
-    rover_guidance.cmd.motor_speed = TRIM_PPRZ(rover_guidance.cmd.motor_speed);
+    float speed = MAX_PPRZ * compute_pid(&rover_guidance.speed_pid);
+    speed = TRIM_PPRZ(speed);
 
+    rover_guidance.cmd.motor_speed = speed;
+    rover_guidance.cmd.motor_dir = atan2f(pos_err.x, pos_err.y) - stateGetNedToBodyEulers_f()->psi; //use real heading
+    
+    //stateGetNedToBodyEulers_f()->psi
     // if not close to WP, compute desired heading
-    rover_guidance.sp.heading = atan2f(pos_err.x, pos_err.y);
-    *heading_sp = rover_guidance.sp.heading; // update nav sp
+    //rover_guidance.sp.heading = atan2f(pos_err.x, pos_err.y);
+    //*heading_sp = rover_guidance.sp.heading; // update nav sp
   }
   else {
     rover_guidance.cmd.motor_speed = 0.f;
+    rover_guidance.cmd.motor_dir = 0.f;
     // use nav heading ref and run angular control
-    rover_guidance.sp.heading = *heading_sp;
+    //rover_guidance.sp.heading = *heading_sp;
   }
-
+  
+  rover_guidance.sp.heading = *heading_sp;
   // angular error
   rover_guidance.turn_pid.err = rover_guidance.sp.heading - stateGetNedToBodyEulers_f()->psi;
   NormRadAngle(rover_guidance.turn_pid.err);
@@ -170,13 +176,13 @@ void rover_guidance_enter(void)
 //  }
 //}
 
-void rover_guidance_set_speed_igain(uint32_t igain)
+void rover_guidance_holonomic_set_speed_igain(uint32_t igain)
 {
   rover_guidance.speed_pid.i = igain;
   rover_guidance.speed_pid.sum_err = 0.f;
 }
 
-void rover_guidance_set_turn_igain(uint32_t igain)
+void rover_guidance_holonomic_set_turn_igain(uint32_t igain)
 {
   rover_guidance.turn_pid.i = igain;
   rover_guidance.turn_pid.sum_err = 0.f;
