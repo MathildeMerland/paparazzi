@@ -100,8 +100,8 @@ void rover_guidance_run(float *heading_sp)
     speed = TRIM_PPRZ(speed);
 
     rover_guidance.cmd.motor_speed = speed;
-    rover_guidance.cmd.motor_dir = atan2f(pos_err.x, pos_err.y) - stateGetNedToBodyEulers_f()->psi; //use real heading
-    
+    rover_guidance.cmd.motor_dir = M_PI - (atan2f(-pos_err.y, pos_err.x) - stateGetNedToBodyEulers_f()->psi); //use real heading
+    rover_guidance.cmd.motor_dir *= 255;
     //stateGetNedToBodyEulers_f()->psi
     // if not close to WP, compute desired heading
     //rover_guidance.sp.heading = atan2f(pos_err.x, pos_err.y);

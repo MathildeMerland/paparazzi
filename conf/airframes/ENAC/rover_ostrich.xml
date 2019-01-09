@@ -21,8 +21,10 @@
 
     <module name="telemetry"     type="xbee_api"/>
     <module name="imu"           type="apogee"/>
-    <configure name="USE_MAGNETOMETER" value="FALSE"/>
-    <module name="gps" type="datalink"/>
+    
+    <module name="gps" type="datalink">
+      <configure name="USE_MAGNETOMETER" value="FALSE"/>
+    </module>
 
     <!--module name="stabilization" type="int_quat"/-->
 
@@ -49,8 +51,8 @@
 
   <rc_commands>
     <set command="SPEED" value="sqrtf(@PITCH*@PITCH + @ROLL*@ROLL)"/>
-    <set command="DIR" value="atan2f(@PITCH, -@ROLL)"/>
-    <set command="TURN"    value="@YAW"/>
+    <set command="DIR" value="255*atan2f(@PITCH, -@ROLL)"/>
+    <set command="TURN"    value="-@YAW"/>
   </rc_commands>
 
   <section name="MIXER">
@@ -58,12 +60,21 @@
   </section>
 
   <command_laws>
-    <set servo="O_SPEED_X" value="@SPEED*cos(@DIR)"/>
-    <set servo="O_SPEED_Y" value="@SPEED*sin(@DIR)"/>
+    <set servo="O_SPEED_X" value="@SPEED*cos(@DIR/255.0)"/>
+    <set servo="O_SPEED_Y" value="@SPEED*sin(@DIR/255.0)"/>
     <set servo="O_TURN"  value="@TURN"/>
   </command_laws>
 
   <section name="IMU" prefix="IMU_">
+  
+    <define name="GYRO_P_SIGN" value="-1"/>
+    <define name="GYRO_Q_SIGN" value="1"/>
+    <define name="GYRO_R_SIGN" value="-1"/>
+
+    <define name="ACCEL_X_SIGN" value="-1"/>
+    <define name="ACCEL_Y_SIGN" value="1"/>
+    <define name="ACCEL_Z_SIGN" value="-1"/>
+    
     <define name="BODY_TO_IMU_PHI"   value="0." unit="deg"/>
     <define name="BODY_TO_IMU_THETA" value="0." unit="deg"/>
     <define name="BODY_TO_IMU_PSI"   value="0." unit="deg"/>
