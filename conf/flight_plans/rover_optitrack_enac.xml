@@ -74,6 +74,12 @@
     <block name="circle">
       <circle radius="nav.radius" wp="STDBY"/>
     </block>
+    <block name="circle2" pre_call="nav_set_heading_rad(sinf(get_sys_time_float()/2))">
+      <circle radius="nav.radius" wp="STDBY"/>
+    </block>
+    <block name="circle3" pre_call="nav_set_heading_rad(-get_sys_time_float()/2)">
+      <circle radius="nav.radius" wp="STDBY"/>
+    </block>
     <block name="oval">
       <oval p1="S1" p2="S2" radius="1."/>
     </block>
