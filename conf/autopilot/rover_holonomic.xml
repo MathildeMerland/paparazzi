@@ -93,7 +93,7 @@
     <mode name="NAV_AUTO">
       <select cond="nav.mode != NAV_MODE_MANUAL"/>
       <control>
-        <call fun="VECT2_COPY(rover_guidance.sp.pos, nav.carrot)"/>
+        <call fun="INT32_VECT2_NED_OF_ENU(rover_guidance.sp.pos, nav.carrot)"/>
         <call fun="rover_guidance_run(&nav.heading)"/>
         <call fun="commands[COMMAND_SPEED] = TRIM_PPRZ(rover_guidance.cmd.motor_speed)"/>
         <call fun="commands[COMMAND_DIR] = TRIM_PPRZ(rover_guidance.cmd.motor_dir)"/>

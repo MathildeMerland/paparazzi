@@ -78,13 +78,13 @@ static float compute_pid(struct RoverGuidancePID *pid)
 #define MAX_POS_ERR       10.f // max position error
 #define MAX_SPEED_ERR     10.f // max speed error
 #define MAX_INTEGRAL_CMD  (MAX_PPRZ / 10.f) // 10% of max command
-#define PROXIMITY_DIST    0.5f // proximity distance TODO improve
+#define PROXIMITY_DIST    0.2f // proximity distance TODO improve
 
 void rover_guidance_run(float *heading_sp)
 {
   // compute position error
   struct FloatVect2 pos_err;
-  VECT2_DIFF(pos_err, rover_guidance.sp.pos, *stateGetPositionEnu_f());
+  VECT2_DIFF(pos_err, rover_guidance.sp.pos, *stateGetPositionNed_f());
   rover_guidance.speed_pid.err = float_vect2_norm(&pos_err);
   BoundAbs(rover_guidance.speed_pid.err, MAX_POS_ERR);
 
@@ -100,7 +100,13 @@ void rover_guidance_run(float *heading_sp)
     speed = TRIM_PPRZ(speed);
 
     rover_guidance.cmd.motor_speed = speed;
-    rover_guidance.cmd.motor_dir = M_PI - (atan2f(-pos_err.y, pos_err.x) - stateGetNedToBodyEulers_f()->psi); //use real heading
+    float cpsi = cosf(stateGetNedToBodyEulers_f()->psi);
+    float spsi = sinf(stateGetNedToBodyEulers_f()->psi);
+    struct FloatVect2 err_body = {
+	    .x  =  cpsi * pos_err.x + spsi * pos_err.y,
+	    .y  = -spsi * pos_err.x + cpsi * pos_err.y
+    };
+    rover_guidance.cmd.motor_dir = atan2f(err_body.x, err_body.y); //use real heading
     rover_guidance.cmd.motor_dir *= 255;
     //stateGetNedToBodyEulers_f()->psi
     // if not close to WP, compute desired heading
